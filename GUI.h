@@ -57,6 +57,7 @@ protected:
 	wxButton* D;
 
 	virtual void window_update(wxUpdateUIEvent& event) { event.Skip(); }
+	virtual void scrollbar_scroll( wxScrollEvent& event ) { event.Skip(); }
 	virtual void LoadImgOnClick(wxCommandEvent& event) { event.Skip(); }
 
 };
