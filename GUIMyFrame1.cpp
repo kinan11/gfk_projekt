@@ -57,22 +57,11 @@ void GUIMyFrame1::LoadImgOnClick(wxCommandEvent& event)
 void GUIMyFrame1::printBitmapButtons() {
 	wxClientDC dc(m_panel1);
 	fgSizer1 = new wxFlexGridSizer(4, 0, 0, 0);
-	m_panel1->SetSizer(fgSizer1);
-	fgSizer1->Fit(m_panel1);
-	//m_panel1->Raise();
 
 	m_fullImagesWidth = 50;
 	m_fullImagesHeight = 50;
 	m_imageWidth = 240;
 	m_imageHeight = 180;
-	/*int columns= floor(m_panel1->GetSize().GetWidth()/ m_imageWidth);
-	int rows= ceil(ceil(m_panel1->GetSize().GetHeight()/ m_imageHeight)/columns);
-	int rc=columns*rows;
-	int x;
-	if (rc < file_count)
-	{
-		x = rc;
-	}else x = file_count;*/
 	
 	/////////////////////
 	for (int i = 0; i < file_count; i++) //load images to vector
@@ -90,23 +79,12 @@ void GUIMyFrame1::printBitmapButtons() {
 		wxBitmapButton* m_bmt1 = new MyButton(fgSizer1, m_panel1, m_panelFullDisplay, EXIF, -1, bmpt1, wxPoint(m_fullImagesHeight, m_fullImagesWidth), path_a);
 		fgSizer1->Add(m_bmt1);
 
-
-		//m_bmt1->SetBitmapLabel(bmpt1);
 		m_fullImagesWidth += m_imageWidth + 50;
-		//m_fullImagesHeight += m_imageHeight + 50;
 
-		//m_bmt1->SetBitmapLabel(bmpt1);
-		//m_bmt1->Show(true);
-		//wxBitmapButton* btn = new MyButton(wxWindow(this), bmpt1);
-		//btn->SetBitmapSelected(btn);
-		//Bind(wxEVT_COMMAND_LEFT_CLICK, wxID_ANY, m_bmt1);
-		//m_bmt1->Show(true);
 	}
-	Scrolling *scroll = new Scrolling(m_panel1,-1, m_fullImagesWidth, m_fullImagesHeight);
-	Scrolling* scroll1 = new Scrolling(m_panel1, -1, m_fullImagesWidth, m_fullImagesHeight);
-
-
-
+	m_panel1->SetSizer(fgSizer1);
+	m_panel1->FitInside();
+	m_panel1->SetScrollRate(25, 25);
 }
 
 
@@ -117,13 +95,8 @@ void GUIMyFrame1::DisplayPic(wxPanel* parent, wxString path, wxPanel* display, w
 	int w = parent->GetSize().GetWidth();			//DO NOT DELETE!
 	int h = parent->GetSize().GetHeight();
 	display->SetSize(w, h);
-	display->Show();
-	wxPanel *p = new Panel2(parent,path,display,fgSizer, wxSize(w, h));
-	//fgSizer->Add(p);
-	/*wxImage im = wxImage(path, wxBITMAP_TYPE_ANY, -1);
-	im.Rescale(1200, 700, wxIMAGE_QUALITY_NEAREST);
-	wxBitmap b1(im, -1);
-	dc.DrawBitmap(b1, 0, 0);*/
+	//display->Show();
+	wxPanel* p = new Panel2(parent, path, display, fgSizer, wxSize(w, h));
 	
 }
 
@@ -161,14 +134,9 @@ void GUIMyFrame1::DisplayMetaData(wxGrid* EXIF, wxPanel* parent, wxPanel* displa
 	}
 }
 
-void GUIMyFrame1::DisplayFolder(wxPanel* parent, wxPanel* display)
+void GUIMyFrame1::DisplayFolder(wxPanel* parent, wxPanel* display, wxString &path)
 {
 	display->Hide();
 	parent->Show();
-}
-
-
-void GUIMyFrame1::scrollbar_scroll(wxScrollEvent& event)
-{
-	// TODO: Implement scrollbar_scroll
+	//path= wxT("/");
 }
