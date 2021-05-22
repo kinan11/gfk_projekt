@@ -44,7 +44,7 @@ class MyFrame1 : public wxFrame
 private:
 
 protected:
-	wxPanel* m_panel1;
+	wxScrolledWindow* m_panel1;
 	wxPanel* m_panelFullDisplay;
 	wxGrid* IPTC;
 	wxGrid* EXIF;
