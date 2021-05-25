@@ -5,8 +5,12 @@ GUIMyFrame1::GUIMyFrame1(wxWindow* parent)
 	MyFrame1(parent)
 {
 	m_myImage = NULL;
-
+	file_count = 0;
 }
+
+Panel2* GUIMyFrame1::currentFullDisplay = new Panel2();
+int GUIMyFrame1::FDwindow_width = 700;
+int GUIMyFrame1::FDwindow_height = 1200;
 
 void GUIMyFrame1::WindowSizeChanged(wxSizeEvent& event)
 {
@@ -20,14 +24,38 @@ void GUIMyFrame1::window_update(wxUpdateUIEvent& event)
 {
 	//changedwindowsize = 0;
 	//repaint();
-	//printBitmapButtons();
+	if (m_panel1->IsShown())
+	{
+		if (window_width != m_panel1->GetSize().GetWidth() || window_height != m_panel1->GetSize().GetHeight())
+		{
+			window_width = m_panel1->GetSize().GetWidth();
+			window_height = m_panel1->GetSize().GetHeight();
+			printBitmapButtons();
+		}
+	}
+	else if (m_panelFullDisplay->IsShown())
+	{
+		if (FDwindow_width != m_panelFullDisplay->GetSize().GetWidth() || FDwindow_height != m_panelFullDisplay->GetSize().GetHeight())
+		{
+			FDwindow_width = m_panelFullDisplay->GetSize().GetWidth();
+			FDwindow_height = m_panelFullDisplay->GetSize().GetHeight();
+			currentFullDisplay->PaintFD();
+		}
+
+	}
 }
 
 
 void GUIMyFrame1::LoadImgOnClick(wxCommandEvent& event)
 {
 
-
+	path_array.Clear();
+	imageLoaded = false;
+	changedirectoryclickevent = 0;
+	//if (fgSizer1) fgSizer1->Clear(true);
+	fgSizer1 = nullptr;
+	bitmapVector.clear();
+	file_count = 0;
 	wxString defaultPath = wxT("/");
 	wxDirDialog dialog(this, wxT("Choose directory"), defaultPath, wxDD_NEW_DIR_BUTTON);
 	if (dialog.ShowModal() == wxID_OK) {
@@ -39,11 +67,9 @@ void GUIMyFrame1::LoadImgOnClick(wxCommandEvent& event)
 		imageLoaded = true;
 
 
-
-		wxMessageBox(_("LOADING FIELS>>>"));
-		printBitmapButtons();
+		//wxMessageBox(_("LOADING FIELS>>>"));
+		loadBitmaps();
 		changedirectoryclickevent = 1;
-		//repaint();
 	}
 	else {
 		wxMessageBox(_("Cannot open a directory"));
@@ -52,56 +78,69 @@ void GUIMyFrame1::LoadImgOnClick(wxCommandEvent& event)
 }
 
 
-
-
-void GUIMyFrame1::printBitmapButtons() {
+void GUIMyFrame1::loadBitmaps()
+{
 	wxClientDC dc(m_panel1);
-	fgSizer1 = new wxFlexGridSizer(4, 0, 0, 0);
+	dc.SetPen(*wxBLACK_PEN);
+	wxString text = "LOADING IMAGES...";
+	dc.SetFont(wxFont(20, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Calibri"));
+	dc.DrawText(text, wxPoint(dc.GetSize().GetWidth() / 2 - 150, dc.GetSize().GetHeight() / 2));
 
-	m_fullImagesWidth = 50;
-	m_fullImagesHeight = 50;
-	m_imageWidth = 240;
-	m_imageHeight = 180;
 
-	/////////////////////
-	for (int i = 0; i < file_count; i++) //load images to vector
+	if (file_count > 0)
 	{
-		/*m_imageRGB = new wxImage(path_array[i], wxBITMAP_TYPE_ANY, -1);
-		m_imageRGB->Rescale(240, 180, wxIMAGE_QUALITY_NEAREST);
-		wxBitmap m_imageBitmap(*m_imageRGB, -1);                        //OK, but not optimized
-		bitmap.push_back(m_imageBitmap);*/
+		for (int i = 0; i < file_count; i++) //load images to vector
+		{
+			wxImage imag = wxImage(path_array[i], wxBITMAP_TYPE_ANY, -1);
+			imag.Rescale(240, 180, wxIMAGE_QUALITY_NEAREST);
 
-		wxImage imag = wxImage(path_array[i], wxBITMAP_TYPE_ANY, -1);
-		wxString path_a = path_array[i];
-		imag.Rescale(240, 180, wxIMAGE_QUALITY_NEAREST);
+			wxBitmap bmpt1(imag, -1);
+			bitmapVector.push_back(bmpt1);
 
-		wxBitmap bmpt1(imag, -1);
-		wxBitmapButton* m_bmt1 = new MyButton(fgSizer1, m_panel1, m_panelFullDisplay, EXIF, -1, bmpt1, wxPoint(m_fullImagesHeight, m_fullImagesWidth), path_a);
-		fgSizer1->Add(m_bmt1);
-
-		m_fullImagesWidth += m_imageWidth + 50;
-
+		}
+		dc.Clear();
+		printBitmapButtons();
 	}
-	m_panel1->SetSizer(fgSizer1);
-	m_panel1->FitInside();
-	m_panel1->SetScrollRate(25, 25);
 }
 
 
-void GUIMyFrame1::DisplayPic(wxPanel* parent, wxString path, wxPanel* display, wxFlexGridSizer* fgSizer)
+void GUIMyFrame1::printBitmapButtons() {
+	if (file_count > 0)
+	{
+		int rows = 1;
+		int cols = (window_width - 40) / 240;
+		if (cols != 0) rows = file_count / cols + 1;
+		if (fgSizer1) fgSizer1->Clear(true);
+		fgSizer1 = new wxFlexGridSizer(rows, cols, 0, 0);
+
+		for (int i = 0; i < file_count; i++) //load images to vector
+		{
+			wxString path_a = path_array[i];
+			wxBitmapButton* m_bmt1 = new MyButton(fgSizer1, m_panel1, m_panelFullDisplay, EXIF, IPTC, -1, bitmapVector[i], wxPoint(m_fullImagesHeight, m_fullImagesWidth), path_a);
+			fgSizer1->Add(m_bmt1);
+		}
+		m_panel1->SetSizer(fgSizer1);
+		m_panel1->FitInside();
+		m_panel1->SetScrollRate(25, 25);
+	}
+}
+
+
+void GUIMyFrame1::DisplayPic(wxPanel* parent, wxString path, wxScrolledWindow* display, wxFlexGridSizer* fgSizer)
 {
-	wxClientDC dc(display);
+	//wxClientDC dc(display);
 	parent->Hide();
 	int w = parent->GetSize().GetWidth();			//DO NOT DELETE!
 	int h = parent->GetSize().GetHeight();
 	display->SetSize(w, h);
 	//display->Show();
-	wxPanel* p = new Panel2(parent, path, display, fgSizer, wxSize(w, h));
+	currentFullDisplay = new Panel2(parent, path, display, fgSizer, wxSize(w, h));
+	//delete(currentFullDisplay);
 
 }
 
 
-void GUIMyFrame1::DisplayMetaData(wxGrid* EXIF, wxPanel* parent, wxPanel* display, wxString path)
+void GUIMyFrame1::DisplayMetaData(wxGrid* EXIF, wxGrid* IPTC, wxPanel* parent, wxScrolledWindow* display, wxString path)
 {
 	wxClientDC dc(parent);
 	FIBITMAP* bmp;
@@ -115,12 +154,16 @@ void GUIMyFrame1::DisplayMetaData(wxGrid* EXIF, wxPanel* parent, wxPanel* displa
 
 	wxString Label;
 	int i = 0;
+	int z = 0;
 	mdhandle = FreeImage_FindFirstMetadata(FIMD_EXIF_MAIN, bitmap_free, &tag);
+
 	if (mdhandle)
 	{
+		z = 1;
 		do
 		{
 			const char* value = FreeImage_TagToString(FIMD_EXIF_MAIN, tag);
+
 			if (FreeImage_GetTagValue(tag))
 			{
 				Label = value;
@@ -128,15 +171,143 @@ void GUIMyFrame1::DisplayMetaData(wxGrid* EXIF, wxPanel* parent, wxPanel* displa
 				i++;
 			}
 
-		} while (FreeImage_FindNextMetadata(mdhandle, &tag));
+		} while (FreeImage_FindNextMetadata(mdhandle, &tag) && i < 16);
 
 		FreeImage_FindCloseMetadata(mdhandle);
 	}
+
+
+	if (!z) {
+		for (int k = 0; k < 16; k++) {
+			EXIF->SetCellValue(k, 0, "");
+		}
+	}
+
+
+	//INSERTING META DATA
+	//FreeImage_SetMetadataKeyValue(FIMD_IPTC, bmp, "By-lineTitle", "]]]]]]]]]");							//IMPORTANT - how to insert metadata into jpeg!!!!!!!
+	//FreeImage_Save(FIF_JPEG, bitmap_free, path, 0);
+
+
+	tag = NULL;
+	FreeImage_GetMetadata(FIMD_IPTC, bitmap_free, "By-lineTitle", &tag);
+	if (tag != NULL) {
+		const char* value = (char*)FreeImage_GetTagValue(tag);
+		Label = value;
+		IPTC->SetCellValue(0, 0, value);
+	}
+	else {
+		IPTC->SetCellValue(0, 0, "");
+	}
+	tag = NULL;
+	FreeImage_GetMetadata(FIMD_IPTC, bitmap_free, "DateCreated", &tag);
+	if (tag != NULL) {
+		const char* value = (char*)FreeImage_GetTagValue(tag);
+		Label = value;
+		IPTC->SetCellValue(1, 0, value);
+	}
+	else {
+		IPTC->SetCellValue(1, 0, "");
+	}
+	tag = NULL;
+	FreeImage_GetMetadata(FIMD_IPTC, bitmap_free, "City", &tag);
+	if (tag != NULL) {
+		const char* value = (char*)FreeImage_GetTagValue(tag);
+		Label = value;
+		IPTC->SetCellValue(2, 0, value);
+	}
+	else {
+		IPTC->SetCellValue(2, 0, "");
+	}
+	tag = NULL;
+	FreeImage_GetMetadata(FIMD_IPTC, bitmap_free, "Country-PrimaryLocationName", &tag);
+	if (tag != NULL) {
+		const char* value = (char*)FreeImage_GetTagValue(tag);
+		Label = value;
+		IPTC->SetCellValue(3, 0, value);
+	}
+	else {
+		IPTC->SetCellValue(3, 0, "");
+	}
+	tag = NULL;
+	FreeImage_GetMetadata(FIMD_IPTC, bitmap_free, "By-line", &tag);
+	if (tag != NULL) {
+		const char* value = (char*)FreeImage_GetTagValue(tag);
+		Label = value;
+		IPTC->SetCellValue(4, 0, value);
+	}
+	else {
+		IPTC->SetCellValue(4, 0, "");
+	}
+	tag = NULL;
+	FreeImage_GetMetadata(FIMD_IPTC, bitmap_free, "Keywords", &tag);
+	if (tag != NULL) {
+		const char* value = (char*)FreeImage_GetTagValue(tag);
+		Label = value;
+		IPTC->SetCellValue(5, 0, value);
+	}
+	else {
+		IPTC->SetCellValue(5, 0, "");
+	}
+
+
+
 }
 
-void GUIMyFrame1::DisplayFolder(wxPanel* parent, wxPanel* display, wxString& path)
+void GUIMyFrame1::DisplayFolder(wxPanel* parent, wxScrolledWindow* display, wxString& path, wxBoxSizer* sizer, wxStaticBitmap* sb)
 {
 	display->Hide();
 	parent->Show();
-	//path= wxT("/");
+	/*wxWindow* w = (wxWindow*)(display);
+	wxSizer *s=
+	(wxSizer*)sizer->Remove(w);*/
+	//sizer->Remove(display);
+	//wxClientDC dc(display);
+	/*wxBitmap d(display->GetSize().GetWidth(), display->GetSize().GetHeight(),1);
+	wxMemoryDC mdc(d);
+	mdc.SetBrush(*wxWHITE);
+	mdc.SetPen(*wxWHITE);
+	mdc.DrawRectangle(0, 0, display->GetSize().GetWidth(), display->GetSize().GetHeight());
+
+	sb = new wxStaticBitmap(display, wxID_ANY, d);
+
+	/*sb->SetBackgroundColour(wxColour(100, 100, 100));
+
+	sb->Refresh();*/
+	//dc.Clear();
+	/*delete(sizer);
+	sizer = nullptr;*/
+	//sizer->Detach(display);
+	//delete(sb);
+	//b1.Clear();
+}
+
+void GUIMyFrame1::IPTCReset(wxCommandEvent& event) {
+	for (int i = 0; i < file_count; i++) //
+	{
+		FIBITMAP* bmp;
+		FIBITMAP* bitmap_free;
+		bmp = FreeImage_Load(FIF_JPEG, path_array[i], JPEG_DEFAULT);
+		int bip = FreeImage_GetBPP(bmp);
+		bitmap_free = FreeImage_Allocate(240, 180, bip);
+		bitmap_free = bmp;
+		FITAG* tag = NULL;
+		FIMETADATA* mdhandle = NULL;
+
+
+		FreeImage_SetMetadataKeyValue(FIMD_IPTC, bitmap_free, "By-lineTitle", "");
+		FreeImage_SetMetadataKeyValue(FIMD_IPTC, bitmap_free, "DateCreated", "");
+		FreeImage_SetMetadataKeyValue(FIMD_IPTC, bitmap_free, "City", "");
+		FreeImage_SetMetadataKeyValue(FIMD_IPTC, bitmap_free, "Country-PrimaryLocationName", "");
+		FreeImage_SetMetadataKeyValue(FIMD_IPTC, bitmap_free, "By-line", "");
+		FreeImage_SetMetadataKeyValue(FIMD_IPTC, bitmap_free, "Keywords", "");
+		IPTC->SetCellValue(0, 0, " ");
+		IPTC->SetCellValue(1, 0, " ");
+		IPTC->SetCellValue(2, 0, " ");
+		IPTC->SetCellValue(3, 0, " ");
+		IPTC->SetCellValue(4, 0, " ");
+		IPTC->SetCellValue(5, 0, " ");
+
+		FreeImage_Save(FIF_JPEG, bitmap_free, path_array[i], 0);
+	}
 }
