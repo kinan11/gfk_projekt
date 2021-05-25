@@ -45,13 +45,14 @@ private:
 
 protected:
 	wxScrolledWindow* m_panel1;
-	wxPanel* m_panelFullDisplay;
+	wxScrolledWindow* m_panelFullDisplay;
 	wxGrid* IPTC;
 	wxGrid* EXIF;
 	wxButton* reset;
 	wxButton* A;
 	wxButton* B;
 	wxButton* D;
+	wxTextCtrl* m_textCtrl1;
 
 
 	// Virtual event handlers, overide them in your derived class
