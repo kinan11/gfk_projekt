@@ -62,7 +62,7 @@ void GUIMyFrame1::printBitmapButtons() {
 	m_fullImagesHeight = 50;
 	m_imageWidth = 240;
 	m_imageHeight = 180;
-	
+
 	/////////////////////
 	for (int i = 0; i < file_count; i++) //load images to vector
 	{
@@ -97,7 +97,7 @@ void GUIMyFrame1::DisplayPic(wxPanel* parent, wxString path, wxPanel* display, w
 	display->SetSize(w, h);
 	//display->Show();
 	wxPanel* p = new Panel2(parent, path, display, fgSizer, wxSize(w, h));
-	
+
 }
 
 
@@ -134,7 +134,7 @@ void GUIMyFrame1::DisplayMetaData(wxGrid* EXIF, wxPanel* parent, wxPanel* displa
 	}
 }
 
-void GUIMyFrame1::DisplayFolder(wxPanel* parent, wxPanel* display, wxString &path)
+void GUIMyFrame1::DisplayFolder(wxPanel* parent, wxPanel* display, wxString& path)
 {
 	display->Hide();
 	parent->Show();
