@@ -29,7 +29,7 @@ MyFrame1::MyFrame1(wxWindow* parent, wxWindowID id, const wxString& title, const
 	//panel full dsplay
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer(wxHORIZONTAL);
-	m_panelFullDisplay = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	m_panelFullDisplay = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	m_panelFullDisplay->SetBackgroundColour(wxColour(255, 255, 255));
 	m_panelFullDisplay->Layout();
 	bSizer3->Add(m_panelFullDisplay, 1, wxALL | wxEXPAND, 5);
@@ -38,6 +38,7 @@ MyFrame1::MyFrame1(wxWindow* parent, wxWindowID id, const wxString& title, const
 
 
 	bSizer1->Add(bSizer2, 1, wxEXPAND, 5);
+	bSizer1->Add(bSizer3, 1, wxEXPAND, 5);
 
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer(wxVERTICAL);
@@ -85,6 +86,13 @@ MyFrame1::MyFrame1(wxWindow* parent, wxWindowID id, const wxString& title, const
 
 
 	bSizer7->Add(bSizer11, 0, wxEXPAND, 5);
+
+	wxBoxSizer* bSizer8;
+	bSizer8 = new wxBoxSizer(wxVERTICAL);
+
+	m_textCtrl1 = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(372, -1), wxTE_MULTILINE | wxTE_READONLY | wxTE_RIGHT | wxTE_WORDWRAP);
+	bSizer8->Add(m_textCtrl1, 0, wxALL, 5);
+	bSizer7->Add(bSizer8, 1, wxEXPAND, 5);
 
 	wxBoxSizer* bSizer10;
 	bSizer10 = new wxBoxSizer(wxHORIZONTAL);
