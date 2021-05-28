@@ -29,7 +29,7 @@ MyFrame1::MyFrame1(wxWindow* parent, wxWindowID id, const wxString& title, const
 	//panel full dsplay
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer(wxHORIZONTAL);
-	m_panelFullDisplay = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	m_panelFullDisplay = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	m_panelFullDisplay->SetBackgroundColour(wxColour(255, 255, 255));
 	m_panelFullDisplay->Layout();
 	bSizer3->Add(m_panelFullDisplay, 1, wxALL | wxEXPAND, 5);
