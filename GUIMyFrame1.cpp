@@ -126,7 +126,7 @@ void GUIMyFrame1::printBitmapButtons() {
 }
 
 
-void GUIMyFrame1::DisplayPic(wxPanel* parent, wxString path, wxScrolledWindow* display, wxFlexGridSizer* fgSizer)
+void GUIMyFrame1::DisplayPic(wxPanel* parent, wxString path, wxPanel* display, wxFlexGridSizer* fgSizer)
 {
 	//wxClientDC dc(display);
 	parent->Hide();
@@ -140,7 +140,7 @@ void GUIMyFrame1::DisplayPic(wxPanel* parent, wxString path, wxScrolledWindow* d
 }
 
 
-void GUIMyFrame1::DisplayMetaData(wxGrid* EXIF, wxGrid* IPTC, wxPanel* parent, wxScrolledWindow* display, wxString path)
+void GUIMyFrame1::DisplayMetaData(wxGrid* EXIF, wxGrid* IPTC, wxPanel* parent, wxPanel* display, wxString path)
 {
 	wxClientDC dc(parent);
 	FIBITMAP* bmp;
@@ -254,32 +254,10 @@ void GUIMyFrame1::DisplayMetaData(wxGrid* EXIF, wxGrid* IPTC, wxPanel* parent, w
 
 }
 
-void GUIMyFrame1::DisplayFolder(wxPanel* parent, wxScrolledWindow* display, wxString& path, wxBoxSizer* sizer, wxStaticBitmap* sb)
+void GUIMyFrame1::DisplayFolder(wxPanel* parent, wxPanel* display, wxString& path)
 {
 	display->Hide();
 	parent->Show();
-	/*wxWindow* w = (wxWindow*)(display);
-	wxSizer *s=
-	(wxSizer*)sizer->Remove(w);*/
-	//sizer->Remove(display);
-	//wxClientDC dc(display);
-	/*wxBitmap d(display->GetSize().GetWidth(), display->GetSize().GetHeight(),1);
-	wxMemoryDC mdc(d);
-	mdc.SetBrush(*wxWHITE);
-	mdc.SetPen(*wxWHITE);
-	mdc.DrawRectangle(0, 0, display->GetSize().GetWidth(), display->GetSize().GetHeight());
-
-	sb = new wxStaticBitmap(display, wxID_ANY, d);
-
-	/*sb->SetBackgroundColour(wxColour(100, 100, 100));
-
-	sb->Refresh();*/
-	//dc.Clear();
-	/*delete(sizer);
-	sizer = nullptr;*/
-	//sizer->Detach(display);
-	//delete(sb);
-	//b1.Clear();
 }
 
 void GUIMyFrame1::IPTCReset(wxCommandEvent& event) {
