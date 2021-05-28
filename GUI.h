@@ -45,7 +45,7 @@ private:
 
 protected:
 	wxScrolledWindow* m_panel1;
-	wxScrolledWindow* m_panelFullDisplay;
+	wxPanel* m_panelFullDisplay;
 	wxGrid* IPTC;
 	wxGrid* EXIF;
 	wxButton* reset;
